@@ -13,16 +13,81 @@
     --muted:  #888888;
     --rule:   #CCCCCC;
     --faint:  #F4F4F4;
+    --bg:     #ffffff;
     --font:   -apple-system, "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
     --mono:   "Courier New", Courier, monospace;
   }
+
+  [data-theme="dark"] {
+    --text:   #E8E8E8;
+    --sub:    #AAAAAA;
+    --muted:  #666666;
+    --rule:   #333333;
+    --faint:  #1E1E1E;
+    --bg:     #121212;
+  }
+
+  /* ── Theme switch ──────────────────────────────────────── */
+  .theme-switch {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 100;
+  }
+
+  .switch-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: var(--font);
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .toggle {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .toggle input { opacity: 0; width: 0; height: 0; }
+
+  .slider {
+    position: absolute;
+    inset: 0;
+    background: var(--rule);
+    border-radius: 20px;
+    transition: background 0.25s;
+  }
+
+  .slider::before {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    left: 3px;
+    top: 3px;
+    background: var(--bg);
+    border-radius: 50%;
+    transition: transform 0.25s, background 0.25s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  .toggle input:checked + .slider { background: #555555; }
+  .toggle input:checked + .slider::before { transform: translateX(16px); }
 
   html { font-size: 14px; }
 
   body {
     font-family: var(--font);
     color: var(--text);
-    background: #ffffff;
+    background: var(--bg);
+    transition: background 0.2s, color 0.2s;
     max-width: 960px;
     margin: 0 auto;
     padding: 3.5rem 2.5rem 5rem;
@@ -284,6 +349,14 @@
 </style>
 </head>
 <body>
+
+<div class="theme-switch">
+  <label class="switch-label" for="theme-toggle">Dark</label>
+  <label class="toggle">
+    <input type="checkbox" id="theme-toggle">
+    <span class="slider"></span>
+  </label>
+</div>
 
 <header>
   <p class="page-label">Clinical Reference</p>
@@ -586,6 +659,25 @@
 <footer>
   For educational use only. Always correlate with the full clinical picture and local laboratory reference ranges.
 </footer>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  const root   = document.documentElement;
+
+  // Respect system preference on first load
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    root.setAttribute('data-theme', 'dark');
+    toggle.checked = true;
+  }
+
+  toggle.addEventListener('change', () => {
+    if (toggle.checked) {
+      root.setAttribute('data-theme', 'dark');
+    } else {
+      root.removeAttribute('data-theme');
+    }
+  });
+</script>
 
 </body>
 </html>
